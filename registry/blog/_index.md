@@ -4,4 +4,3 @@ pageType: "CollectionPage"
 ---
 
 Koleksi blog post
-

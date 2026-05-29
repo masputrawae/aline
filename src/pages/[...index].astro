@@ -1,0 +1,89 @@
+---
+import type { GetStaticPaths } from "astro"
+import Document from "@layouts/Document.astro"
+import { getCollection, render } from "astro:content"
+import path from "node:path"
+import { groupIndexWithPage } from "@lib/utils/content"
+
+/**
+ * Dynamic route for index pages (_index.md or index.md).
+ * Handles Home, Blog Index, Projects Index, and Notes/Garden Index.
+ */
+export const getStaticPaths = (async () => {
+  // Fetch all collections
+  const indexEntries = await getCollection("index")
+  const blogEntries = await getCollection("blog")
+  const projectEntries = await getCollection("projects")
+  const noteEntries = await getCollection("notes")
+
+  // Combine entries for grouping logic
+  const allContent = [
+    ...blogEntries,
+    ...projectEntries,
+    ...noteEntries,
+    ...indexEntries,
+  ]
+
+  // Map children to their respective index sections
+  const childrenMap = groupIndexWithPage(indexEntries, allContent)
+
+  return indexEntries.map((entry) => {
+    // Root index ID "/" should be undefined for the main index page (index.html)
+    const slug = entry.id === "/" ? undefined : entry.id
+
+    // Extract root collection name from ID (e.g., "blog/some-folder" -> "blog")
+    const rootCollection = entry.id.split("/").filter(Boolean)[0] || ""
+
+    return {
+      params: { index: slug },
+      props: {
+        entry,
+        children: {
+          root: rootCollection,
+          pages:
+            entry.data.pageType === "CollectionPage"
+              ? childrenMap.get(entry.id)
+              : undefined,
+        },
+      },
+    }
+  })
+}) satisfies GetStaticPaths
+
+const { entry, children } = Astro.props
+const { title } = entry.data
+const { Content } = await render(entry)
+---
+
+<Document>
+  <article>
+    <h1>{title}</h1>
+    <Content />
+
+    {
+      /* Render child pages if this is a CollectionPage (like /blog or /notes) */
+    }
+    {
+      children.pages && children.pages.length > 0 && (
+        <section class="mt-8">
+          <ul class="space-y-2">
+            {children.pages.map((child) => (
+              <li>
+                <a
+                  href={path.join(
+                    import.meta.env.BASE_URL,
+                    child.collection !== "index" ? children.root : "",
+                    child.id
+                  )}
+                  class="text-blue-600 hover:underline"
+                >
+                  {child.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</Document>
