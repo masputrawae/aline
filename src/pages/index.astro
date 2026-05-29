@@ -1,5 +1,10 @@
 ---
+import { getCollection } from "astro:content"
 
+const pageEntries = await getCollection("pages")
+const blogEntries = await getCollection("blog")
+const noteEntries = await getCollection("notes")
+const projectEntries = await getCollection("projects")
 ---
 
 <html lang="en">
@@ -13,5 +18,17 @@
   </head>
   <body>
     <h1>Astro</h1>
+
+    <h2>Page Entries</h2>
+    <pre>{pageEntries.map((i)=> JSON.stringify(i, null, 4) )}</pre>
+
+    <h2>Blog Entries</h2>
+    <pre>{blogEntries.map((i)=> JSON.stringify(i, null, 4) )}</pre>
+
+    <h2>Project Entries</h2>
+    <pre>{projectEntries.map((i)=> JSON.stringify(i, null, 4) )}</pre>
+
+    <h2>Note Entries</h2>
+    <pre>{noteEntries.map((i)=> JSON.stringify(i, null, 4) )}</pre>
   </body>
 </html>
