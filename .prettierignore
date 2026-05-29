@@ -1,0 +1,8 @@
+# obsidian
+vault/.obsidian
+vault/.trash
+
+# pnpm
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
