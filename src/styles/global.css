@@ -1,2 +1,15 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+@theme {
+  --color-background: #fafafa;
+  --color-foreground: var(--color-neutral-900);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-neutral-200 dark:selection:bg-neutral-800;
+  }
+}
+
+@variant dark (&:where(.dark, [data-theme="dark"], @media (prefers-color-scheme: dark)));

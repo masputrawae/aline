@@ -4,6 +4,7 @@ import { render } from "astro:content"
 import { getCollection } from "astro:content"
 
 import Document from "@layouts/Document.astro"
+import { slugToTitle } from "@lib/utils/slug-to-title"
 
 export const getStaticPaths = (async () => {
   return (await getCollection("notes")).map((i) => ({
@@ -13,10 +14,18 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths
 
 const entry = Astro.props
-const { Content } = await render(entry)
+const { data, filePath } = entry
+const { Content, remarkPluginFrontmatter: rpf } = await render(entry)
+
+const title =
+  data.title ||
+  rpf.title ||
+  slugToTitle(filePath?.split("/").filter(Boolean).pop())
 ---
 
 <Document>
-  <h1>{entry.data.title}</h1>
+  <h1 class="mb-2 font-serif text-3xl font-medium tracking-tight italic">
+    {title}
+  </h1>
   <Content />
 </Document>

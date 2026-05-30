@@ -10,6 +10,7 @@ import tailwindcss from "@tailwindcss/vite"
 import remarkRelativePath from "./src/lib/plugins/remark-relative-path"
 import remarkWikiLink from "./src/lib/plugins/remark-wiki-link"
 import remarkFrontmatter from "./src/lib/plugins/remark-frontmatter"
+import remarkCallout from "@r4ai/remark-callout"
 
 // https://astro.build/config
 export default defineConfig({
@@ -33,6 +34,7 @@ export default defineConfig({
           },
         ],
         remarkFrontmatter,
+        remarkCallout
       ],
     }),
   },
